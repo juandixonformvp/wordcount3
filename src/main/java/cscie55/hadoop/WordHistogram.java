@@ -27,7 +27,7 @@ public class WordHistogram {
         ) throws IOException, InterruptedException {
             StringTokenizer itr = new StringTokenizer(value.toString().replaceAll("[^a-zA-Z ]", "").toLowerCase().trim());
             while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken());
+                word.set(String.valueOf(itr.nextToken().length()));
                 context.write(word, one);
             }
         }
