@@ -18,26 +18,26 @@ public class WordHistogram {
 
 
     public static class TokenizerMapper
-            extends Mapper<Object, Text, Text, IntWritable>{
+            extends Mapper<Object, Text, IntWritable, IntWritable>{
 
         private final static IntWritable one = new IntWritable(1);
-        private Text word = new Text();
+        private IntWritable word = new IntWritable();
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
             StringTokenizer itr = new StringTokenizer(value.toString().replaceAll("[^a-zA-Z ]", "").toLowerCase().trim());
             while (itr.hasMoreTokens()) {
-                word.set(String.valueOf(itr.nextToken().length()));
+                word.set(itr.nextToken().length());
                 context.write(word, one);
             }
         }
     }
 
     public static class IntSumReducer
-            extends Reducer<Text,IntWritable,Text,IntWritable> {
+            extends Reducer<IntWritable,IntWritable,IntWritable,IntWritable> {
         private IntWritable result = new IntWritable();
 
-        public void reduce(Text key, Iterable<IntWritable> values,
+        public void reduce(IntWritable key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
             int sum = 0;
@@ -62,7 +62,7 @@ public class WordHistogram {
         job.setMapperClass(TokenizerMapper.class);
         job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);
-        job.setOutputKeyClass(Text.class);
+        job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(IntWritable.class);
 
         // these lines are for dev purposes
